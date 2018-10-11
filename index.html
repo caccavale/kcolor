@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<meta charset="UTF-8">
+<html>
+
+<style>
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #1A1A1A;
+    font-size: 9pt;
+}
+
+div {
+    padding: 3px;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
+</style>
+
+<body style="margin:0;">
+    <div style="width:800px;">
+        <div id="gallery" style="display:flex;padding:0px;">
+            <div><img src="./pictures/gogh.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/mignola.jpeg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/monet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/piet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/sophie.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+        </div>
+        <div><canvas id="canvas" width="594" height="235" style="max-width:100%;"></canvas></div>
+        <div style="padding-top:0px;">
+            Clusters:
+            <select id="clusters">
+                <option value="3">3</option>
+                <option selected value="6">6</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select> 
+            &mdash; Upload an image: 
+            <input type="file" id="image">
+        </div>
+    </div>
+</body>
+
+<script src="./kmeans.js"></script>
+<script>
+    const canvas = document.getElementById('canvas')
+    const ctx = canvas.getContext('2d')
+    const image = document.getElementById('image');
+
+    function k_cluster_image(img, width, height) {
+        const start_time = new Date().getTime();
+        const clusters = document.getElementById("clusters").value;
+
+        canvas.width = width * 2;
+        canvas.height = height;
+        ctx.drawImage(img, 0, 0);
+
+        const imgData = ctx.getImageData(0, 0, width, height).data;
+        let buffer_pointer;
+        try {
+            buffer_pointer = Module._malloc(imgData.length * imgData.BYTES_PER_ELEMENT);
+        } catch (e) {
+            console.error('Could not malloc: ' + e)
+            return;
+        }
+
+        try {
+            Module.HEAPU8.set(imgData, buffer_pointer);
+
+            let result = Module.ccall("kmeans", null, ["number", "number", "number", "number", "number"], [buffer_pointer, width, height, clusters, 200])
+            console.log(result);
+
+            let palData = new Uint8ClampedArray(imgData.length);
+            palData.set(Module.HEAPU8.subarray(buffer_pointer, buffer_pointer + imgData.length))
+
+            ctx.putImageData(new ImageData(palData, width, height), width, 0);
+        } catch (e) {
+            console.error(e);
+        } finally {
+            Module._free(buffer_pointer);
+        }
+        console.log('Seconds elapsed: ' + (new Date().getTime() - start_time) / 1000)
+    }
+
+    image.addEventListener('change', (e) => {
+        const reader = new FileReader();
+        reader.onload = function(event){
+            const img = new Image();
+            img.onload = function(){
+                k_cluster_image(img, img.width, img.height);
+            }
+            img.src = event.target.result;
+        }
+        reader.readAsDataURL(e.target.files[0]);     
+    }, false);
+</script>
+</html>
