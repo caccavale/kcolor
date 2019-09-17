@@ -6,27 +6,23 @@
     <link rel="stylesheet" href="index.css">
 </head>
 
-<body style="margin:0;">
-    <div style="width:800px;">
-        <div id="gallery" style="display:flex;padding:0px;">
-            <div><img src="./pictures/gogh.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
-            </div>
-            <div><img src="./pictures/mignola.jpeg"
-                    onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
-            <div><img src="./pictures/monet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
-            </div>
-            <div><img src="./pictures/piet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
-            </div>
-            <div><img src="./pictures/sophie.jpg"
-                    onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+<body>
+    <div id="kcolor">
+        <div id="kcolor-gallery">
+            <div><img src="./pictures/gogh.jpg" onclick="k_cluster_wrapper(this)"></div>
+            <div><img src="./pictures/mignola.jpeg" onclick="k_cluster_wrapper(this)"></div>
+            <div><img src="./pictures/monet.jpg" onclick="k_cluster_wrapper(this)"></div>
+            <div><img src="./pictures/piet.jpg" onclick="k_cluster_wrapper(this)"></div>
+            <div><img src="./pictures/sophie.jpg" onclick="k_cluster_wrapper(this)"></div>
         </div>
-        <div style="padding:0px 3px;"><canvas id="canvas" width="594" height="235" style="max-width:100%;"></canvas>
+        <div id="kcolor-canvas">
+            <canvas id="canvas" width="594" height="235" style="max-width:100%;"></canvas>
         </div>
         <div>
             Clusters:
-            <select id="clusters" onchange="console.log('Drop changed, update image...')">
+            <select id="clusters" onchange="k_cluster_update()">
                 <option value="3">3</option>
-                <option selected value="6">6</option>
+                <option value="6" selected>6</option>
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
@@ -43,13 +39,23 @@
     const ctx = canvas.getContext('2d')
     const image = document.getElementById('image');
 
-    function k_cluster_image(img, width, height) {
+    function k_cluster_wrapper(img) {
+        canvas.width = img.naturalWidth * 2;
+        canvas.height = img.naturalHeight;
+        ctx.drawImage(img, 0, 0);
+
+        return k_cluster_image(img.naturalWidth, img.naturalHeight)
+    }
+
+    function k_cluster_update() {
+        const imgData = ctx.getImageData(0, 0, canvas.width / 2, canvas.height).data
+
+        return k_cluster_image(canvas.width / 2, canvas.height)
+    }
+
+    function k_cluster_image(width, height) {
         const start_time = new Date().getTime();
         const clusters = document.getElementById("clusters").value;
-
-        canvas.width = width * 2;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0);
 
         const imgData = ctx.getImageData(0, 0, width, height).data;
         let buffer_pointer;

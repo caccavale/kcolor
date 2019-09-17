@@ -2,10 +2,24 @@ body {
     font-family: 'Helvetica', 'Arial', sans-serif;
     color: #1A1A1A;
     font-size: 9pt;
+    margin: 0px;
 }
 
 div {
     padding: 3px;
+}
+
+#kcolor {
+    width:800px;
+}
+
+#kcolor-gallery {
+    display:flex;
+    padding:0px;
+}
+
+#kcolor-canvas {
+    padding:0px 3px;
 }
 
 img {
