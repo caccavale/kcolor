@@ -7,44 +7,42 @@
 #include <emscripten.h>
 
 typedef struct rgba {
-	uint8_t r;
-	uint8_t g;
+    uint8_t r;
+    uint8_t g;
     uint8_t b;
     uint8_t a;
 } rgba_t;
 
 static int euclidean_distance(const rgba_t *p1, const rgba_t *p2) {
     int dr = (p1->r - p2->r);
-	int dg = (p1->g - p2->g);
+    int dg = (p1->g - p2->g);
     int db = (p1->b - p2->b);
 
     return dr*dr + dg*dg + db*db;
 }
 
 static void pick_centroid(rgba_t **objs, int *clusters, size_t num_objs, int cluster, rgba_t *centroid) {
-	int num_cluster = 0;
-	
-    uint32_t r = 0;
-    uint32_t g = 0;
-    uint32_t b = 0;
+    int num_cluster = 0;
+    
+    uint32_t r = 0, g = 0, b = 0;
 
-	for (int i = 0; i < num_objs; i++) {
-		if (clusters[i] != cluster) continue;
+    for (int i = 0; i < num_objs; i++) {
+        if (clusters[i] != cluster) continue;
 
-		r += objs[i]->r;
-		g += objs[i]->g;
+        r += objs[i]->r;
+        g += objs[i]->g;
         b += objs[i]->b;
-		num_cluster++;
-	}
-	if (num_cluster) {
-		r /= num_cluster;
-		g /= num_cluster;
+        num_cluster++;
+    }
+    if (num_cluster) {
+        r /= num_cluster;
+        g /= num_cluster;
         b /= num_cluster;
         
-		centroid->r = r;
+        centroid->r = r;
         centroid->g = g;
         centroid->b = b;
-	}
+    }
     return;
 }
 
@@ -106,6 +104,7 @@ int kmeans(rgba_t *pixels, int width, int height, int k, int max_iterations) {
     int row = 0;
     int col = 0;
 
+    // Changes horizontal bars to vertical cause it looks cool
     for (int cluster = 0; cluster < k; cluster++) {
         for(int p = 0; p < num_objs; p++) {
             if (clusters[p] == cluster) {

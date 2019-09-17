@@ -2,43 +2,36 @@
 <meta charset="UTF-8">
 <html>
 
-<style>
-body {
-    font-family: 'Helvetica', 'Arial', sans-serif;
-    color: #1A1A1A;
-    font-size: 9pt;
-}
-
-div {
-    padding: 3px;
-}
-
-img {
-    height: auto;
-    max-width: 100%;
-}
-</style>
+<head>
+    <link rel="stylesheet" href="index.css">
+</head>
 
 <body style="margin:0;">
     <div style="width:800px;">
         <div id="gallery" style="display:flex;padding:0px;">
-            <div><img src="./pictures/gogh.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
-            <div><img src="./pictures/mignola.jpeg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
-            <div><img src="./pictures/monet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
-            <div><img src="./pictures/piet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
-            <div><img src="./pictures/sophie.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/gogh.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
+            </div>
+            <div><img src="./pictures/mignola.jpeg"
+                    onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
+            <div><img src="./pictures/monet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
+            </div>
+            <div><img src="./pictures/piet.jpg" onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)">
+            </div>
+            <div><img src="./pictures/sophie.jpg"
+                    onclick="k_cluster_image(this, this.naturalWidth, this.naturalHeight)"></div>
         </div>
-        <div><canvas id="canvas" width="594" height="235" style="max-width:100%;"></canvas></div>
-        <div style="padding-top:0px;">
+        <div style="padding:0px 3px;"><canvas id="canvas" width="594" height="235" style="max-width:100%;"></canvas>
+        </div>
+        <div>
             Clusters:
-            <select id="clusters">
+            <select id="clusters" onchange="console.log('Drop changed, update image...')">
                 <option value="3">3</option>
                 <option selected value="6">6</option>
                 <option value="10">10</option>
                 <option value="15">15</option>
                 <option value="20">20</option>
-            </select> 
-            &mdash; Upload an image: 
+            </select>
+            &mdash; Upload an image:
             <input type="file" id="image">
         </div>
     </div>
@@ -87,14 +80,15 @@ img {
 
     image.addEventListener('change', (e) => {
         const reader = new FileReader();
-        reader.onload = function(event){
+        reader.onload = function (event) {
             const img = new Image();
-            img.onload = function(){
+            img.onload = function () {
                 k_cluster_image(img, img.width, img.height);
             }
             img.src = event.target.result;
         }
-        reader.readAsDataURL(e.target.files[0]);     
+        reader.readAsDataURL(e.target.files[0]);
     }, false);
 </script>
+
 </html>

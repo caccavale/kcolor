@@ -1,0 +1,14 @@
+body {
+    font-family: 'Helvetica', 'Arial', sans-serif;
+    color: #1A1A1A;
+    font-size: 9pt;
+}
+
+div {
+    padding: 3px;
+}
+
+img {
+    height: auto;
+    max-width: 100%;
+}
